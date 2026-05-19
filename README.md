@@ -1,6 +1,6 @@
 # reasonix-skill-powers
 
-面向 Reasonix 的技能集合，受 [superpowers-zh](https://github.com/doocs/superpowers-zh) 启发，简化后适配到 Reasonix 子代理工作流。
+面向 Reasonix 的技能集合，受 [superpowers-zh](https://github.com/jnMetaCode/superpowers-zh) 启发，简化后适配到 Reasonix 子代理工作流。
 
 ## 这是什么
 
