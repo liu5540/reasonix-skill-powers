@@ -25,8 +25,9 @@ skills/
 ## 使用方式
 
 1. 将本仓库克隆到本地
-2. 在 Reasonix 配置中配置 `skillsPath`
-3. Reasonix 会根据技能描述自动匹配并加载对应的 SKILL.md
+2. 在项目中使用 ,将skills 复制到 `.reasonix/skills`
+3. /skill use-superpowers 加载 `superpowers` 到提示词
+4. /skill brainstorming xxxx 时, 包含了 `审核` 之类的提示词会跳过计划编写，直接执行操作
 
 ## 技能列表
 
