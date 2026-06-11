@@ -1,108 +1,95 @@
 ---
 name: requesting-code-review
-description: 完成任务、实现重要功能或合并前使用，用于验证工作成果是否符合要求
+description: 在完成任务、实现主要功能或合并前使用——分派代码审查子代理，在问题级联前捕获它们
 ---
 
 # 请求代码审查
 
-派遣 code-reviewer 子代理来在问题扩散之前发现它们。审查者获得的是精心组织的评估上下文——绝不是你的会话历史。这样可以让审查者专注于工作成果而非你的思考过程，同时保留你自己的上下文以便继续工作。
+分派一个代码审查子代理，在问题级联之前捕获它们。审查者获取精确构建的上下文进行评估——永远不是你会话的历史。这使审查者聚焦于工作产物而非你的思考过程，也保留你自己的上下文用于继续工作。
 
-**核心原则：** 早审查，勤审查。
+**核心原则：** 早审查，常审查。
 
 ## 何时请求审查
 
-**必须审查：**
-- 子代理驱动开发中每个任务完成后
-- 完成重要功能后
+**强制：**
+- 子代理驱动开发中每完成一个任务后
+- 完成主要功能后
 - 合并到 main 之前
 
 **可选但有价值：**
-- 卡住时（换个视角）
-- 重构之前（建立基线）
-- 修复复杂 bug 之后
+- 卡住时（新鲜视角）
+- 重构前（基线检查）
+- 修复复杂 Bug 后
 
 ## 如何请求
 
 **1. 获取 git SHA：**
-```
-BASE_SHA: run_command(command="git rev-parse HEAD~1")   # 或 origin/main
-HEAD_SHA: run_command(command="git rev-parse HEAD")
-```
-
-**2. 派遣 code-reviewer 子代理：**
-
-```
-run_skill(
-  name="flow-review",
-  arguments="审查当前分支变更。实现内容：{WHAT_WAS_IMPLEMENTED}。参考计划：{PLAN_OR_REQUIREMENTS}。范围：{BASE_SHA}..{HEAD_SHA}。"
-)
+```bash
+BASE_SHA=$(git rev-parse HEAD~1)  # 或 origin/main
+HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**占位符说明：**
-- `{WHAT_WAS_IMPLEMENTED}` - 你刚完成的内容
-- `{PLAN_OR_REQUIREMENTS}` - 预期功能
-- `{BASE_SHA}` - 起始提交
-- `{HEAD_SHA}` - 结束提交
-- `{DESCRIPTION}` - 简要说明
+**2. 分派代码审查子代理：**
 
-**3. 处理反馈：**
-- Critical 问题立即修复
-- Important 问题在继续之前修复
-- Minor 问题记录下来稍后处理
-- 如果审查者有误，用技术理由反驳
+使用 `task` 工具（general-purpose），填写下方模板：
+
+```
+DESCRIPTION: [简要描述构建了什么]
+PLAN_OR_REQUIREMENTS: [它应该做什么]
+BASE_SHA: [起始提交]
+HEAD_SHA: [结束提交]
+```
+
+**3. 对反馈采取行动：**
+- 立即修复严重问题
+- 继续前修复重要问题
+- 记录次要问题供后续处理
+- 如果审查者错误则有理有据反驳
 
 ## 示例
 
 ```
-[刚完成任务 2：添加验证功能]
+[刚完成任务2：添加验证函数]
 
-你：让我在继续之前请求代码审查。
+你：让我请求代码审查。
 
-run_command(command="git log --oneline | grep 'Task 1' | head -1 | awk '{print $1}'")   # 获取 BASE_SHA
-run_command(command="git rev-parse HEAD")   # 获取 HEAD_SHA
+BASE_SHA=$(git log --oneline | grep "任务1" | head -1 | awk '{print $1}')
+HEAD_SHA=$(git rev-parse HEAD)
 
-run_skill(
-  name="flow-review",
-  arguments="审查当前分支从 a7981ec 到 3df7661 的变更。实现了 verifyIndex() 和 repairIndex()，支持 4 种问题类型。参考计划：docs/superpowers/plans/deployment-plan.md 任务 2。"
-)
+[分派代码审查子代理]
+  DESCRIPTION: 添加了 verifyIndex() 和 repairIndex()，支持4种问题类型
+  PLAN_OR_REQUIREMENTS: docs/superpowers/plans/deployment-plan.md 中的任务2
+  BASE_SHA: a7981ec
+  HEAD_SHA: 3df7661
 
 [子代理返回]:
-  优点：架构清晰，测试真实
-  问题：
-    Important：缺少进度指示器
-    Minor：报告间隔使用了魔法数字 (100)
-  评估：可以继续
+  优点: 架构清晰，真实测试
+  问题:
+    重要: 缺少进度指示器
+    次要: 报告间隔使用了魔法数字(100)
+  评估: 可以继续
 
-你：[修复进度指示器]
-[继续任务 3]
+你: [修复进度指示器]
+[继续任务3]
 ```
 
-## 与工作流的集成
+## 与工作流集成
 
-**子代理驱动开发：**
-- 每个任务完成后审查
-- 在问题叠加之前发现它们
-- 修复后再进入下一个任务
+**子代理驱动开发：** 每任务后审查，在问题复合前捕获，修复后再移动到下一任务。
 
-**执行计划：**
-- 每批（3 个任务）后审查
-- 获取反馈，修复，继续
+**内联执行计划：** 每任务后在自然检查点审查。
 
-**临时开发：**
-- 合并前审查
-- 卡住时审查
+**临时开发：** 合并前审查，卡住时审查。
 
 ## 红线
 
-**绝不要：**
-- 因为"很简单"就跳过审查
-- 忽略 Critical 问题
-- 带着未修复的 Important 问题继续推进
-- 对合理的技术反馈进行争辩
+**绝不：**
+- 因为"简单"跳过审查
+- 忽略严重问题
+- 带着未修复的重要问题继续
+- 与有效的技术反馈争辩
 
-**如果审查者有误：**
-- 用技术理由反驳
-- 展示证明其可行的代码/测试
-- 要求澄清
-
-参见模板：requesting-code-review/code-reviewer.md
+**如果审查者错误：**
+- 用技术推理反驳
+- 展示证明它可用的代码/测试
+- 请求澄清
