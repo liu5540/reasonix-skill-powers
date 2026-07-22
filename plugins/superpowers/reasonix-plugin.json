@@ -1,0 +1,30 @@
+{
+  "name": "superpowers",
+  "version": "6.1.1",
+  "description": "一种行之有效的代理技能框架与软件开发方法论：规划、测试驱动开发（TDD）、调试与协作工作流。",
+  "author": {
+    "name": "Jesse Vincent",
+    "email": "jesse@fsck.com"
+  },
+  "homepage": "https://github.com/obra/superpowers",
+  "license": "MIT",
+  "keywords": [
+    "brainstorming",
+    "subagent-driven-development",
+    "skills",
+    "planning",
+    "tdd",
+    "debugging",
+    "code-review",
+    "workflow"
+  ],
+  "skills": "skills",
+  "hooks": {
+    "SessionStart": [
+      {
+        "command": "hooks/session-start",
+        "additionalContext": "工具映射 —— 用于 Superpowers 技能：\n- 当 Superpowers 技能要求询问用户、提出澄清问题、一次只问一个问题、提供多选选项、使用终端提问或等待用户选择时，调用 `ask` 工具。除非 `ask` 不可用或会话处于自动授权模式，否则不要将这些选项以纯文本形式呈现。\n- 对于 `ask`，尽可能提供 1 个问题并附带 2-4 个具体选项。将推荐选项放在第一位，并在其标签后加上 `(Recommended)` 后缀。\n- 当 Superpowers 技能引用 `TodoWrite` 时，使用 workflow（`todo_write`、`complete_step`） 工具。\n- 当 Superpowers 技能提到 `Task tool（通用工具）` 或要求你分派实现者/审查者子代理时，使用 `task` 工具。\n- 对于实现、代码审查、规范审查、质量审查以及已填充的 Superpowers 子代理提示模板，将完整填充的提示粘贴到 `prompt` 中，并提供简短的 `description`。\n- 对于需要多次搜索的只读代码库探索，使用 `explore`。\n- 对于只读规划或架构设计，使用 `plan` 模式。\n- 保持依赖性的 Superpowers 子代理步骤按顺序执行。仅当工作相互独立时，才使用 `task` 工具并行运行。\n- 当 Superpowers 技能引用 `Skill` 工具时，使用原生的 `run_skill` 工具。\n- 当技能要求查询代码调用关系时，使用 MCP `codegraph` 查询, 要求搜索文件内容时，使用 `grep`；要求按路径或模式查找文件时，使用 `glob`；要求获取 URL 时，使用 `web_fetch`；要求搜索网页时，使用 `web_search`。\n\n调用技能`using-superpowers`" 
+      }
+    ]
+  }
+}
